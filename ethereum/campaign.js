@@ -1,6 +1,7 @@
 import web3 from './web3'
 import Campaign from './build/Campaign.json'
 
+/* Function to create campaign interface */
 export default (address) => {
     const instance = new web3.eth.Contract(
         JSON.parse(Campaign.interface),

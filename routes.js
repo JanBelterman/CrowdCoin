@@ -1,3 +1,5 @@
+/* Define routes using next-routes module (next can only serve static routes) */
+
 const routes = require('next-routes')()
 
 routes

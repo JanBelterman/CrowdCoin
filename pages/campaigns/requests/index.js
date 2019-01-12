@@ -6,6 +6,7 @@ import Campaign from '../../../ethereum/campaign'
 import RequestRow from '../../../components/RequestRow'
 
 class RequestIndex extends Component {
+
     static async getInitialProps(props) {
         const { address } = props.query
         const campaign = Campaign(address)
@@ -47,7 +48,7 @@ class RequestIndex extends Component {
                     <a>
                         <Button primary floated="right" style={{ marginBottom: 10 }}>
                             Add Request
-            </Button>
+                        </Button>
                     </a>
                 </Link>
                 <Table>

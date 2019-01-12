@@ -8,12 +8,14 @@ class RequestRow extends Component {
     state = {
         loadingApprove: false,
         loadingFinalize: false,
-        errorMessage: ''
+        error: ''
     }
 
     onApprove = async () => {
-        this.startLoadingApprove()
+        // Start loader
+        this.setState({ loadingApprove: true })
 
+        // Try approving the request
         try {
             const campaign = Campaign(this.props.address)
             const accounts = await web3.eth.getAccounts()
@@ -21,16 +23,21 @@ class RequestRow extends Component {
                 from: accounts[0]
             })
         } catch (err) {
-            this.stopLoadingApprove()
+            // Display error
+            this.setState({ error: err.message })
         }
 
-        this.stopLoadingApprove()
+        // Stop loader
+        this.setState({ loadingApprove: false })
+        // Reload page
         Router.replaceRoute(`/campaigns/${this.props.address}/requests`)
     }
 
     onFinalize = async () => {
-        this.startLoadingFinalize()
+        // Start loader
+        this.setState({ loadingFinalize: true })
 
+        // Try finalizing the request
         try {
             const campaign = Campaign(this.props.address)
             const accounts = await web3.eth.getAccounts()
@@ -38,10 +45,13 @@ class RequestRow extends Component {
                 from: accounts[0]
             })
         } catch (err) {
-            this.stopLoadingFinalize()
+            // Display error
+            this.setState({ error: err.message })
         }
 
-        this.stopLoadingFinalize()
+        // Stop loader
+        this.setState({ loadingFinalize: false })
+        // Reload page
         Router.replaceRoute(`/campaigns/${this.props.address}/requests`)
     }
 
@@ -53,46 +63,39 @@ class RequestRow extends Component {
         return (
             <Row
                 disabled={request.complete}
-                positive={readyToFinalize && !request.complete} >
+                positive={readyToFinalize && !request.complete}
+            >
                 <Cell>{id}</Cell>
                 <Cell>{request.description}</Cell>
                 <Cell>{web3.utils.fromWei(request.value, 'ether')}</Cell>
                 <Cell>{request.recipient}</Cell>
-                <Cell>
-                    {request.approvalCount}/{approversCount}
-                </Cell>
+                <Cell>{request.approvalCount}/{approversCount}</Cell>
                 <Cell>
                     {request.complete ? null : (
-                        <Button color="green" basic onClick={this.onApprove} loading={this.state.loadingApprove}>
+                        <Button
+                            color="green"
+                            basic onClick={this.onApprove}
+                            loading={this.state.loadingApprove}
+                            disabled={this.state.loadingFinalize}
+                        >
                             Approve
                         </Button>
                     )}
                 </Cell>
                 <Cell>
                     {request.complete ? null : (
-                        <Button color="teal" basic onClick={this.onFinalize} loading={this.state.loadingFinalize}>
+                        <Button
+                            color="teal"
+                            basic onClick={this.onFinalize}
+                            loading={this.state.loadingFinalize}
+                            disabled={this.state.loadingFinalize}
+                        >
                             Finalize
                         </Button>
                     )}
                 </Cell>
             </Row>
         )
-    }
-
-    startLoadingApprove() {
-        this.setState({ loadingApprove: true })
-    }
-
-    stopLoadingApprove() {
-        this.setState({ loadingApprove: false })
-    }
-
-    startLoadingFinalize() {
-        this.setState({ loadingFinalize: true })
-    }
-
-    stopLoadingFinalize() {
-        this.setState({ loadingFinalize: false })
     }
 
 }

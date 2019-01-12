@@ -7,35 +7,37 @@ import { Router } from '../routes'
 class ContributeForm extends Component {
     state = {
         value: '',
-        errorMessage: '',
+        error: '',
         loading: false
     }
 
     onSubmit = async event => {
         event.preventDefault()
+        // Remove error & start loading
+        this.setState({ error: '', loading: true })
 
-        const campaign = Campaign(this.props.address)
-
-        this.setState({ loading: true, errorMessage: '' })
-
+        // Try contributing to campaign
         try {
-            const accounts = await web3.eth.getAccounts();
+            const campaign = Campaign(this.props.address)
+            const accounts = await web3.eth.getAccounts()
             await campaign.methods.contribute().send({
                 from: accounts[0],
                 value: web3.utils.toWei(this.state.value, 'ether')
             })
-
+            // Reload page
             Router.replaceRoute(`/campaigns/${this.props.address}`)
         } catch (err) {
-            this.setState({ errorMessage: err.message })
+            // Display error
+            this.setState({ error: err.message })
         }
 
-        this.setState({ loading: false, value: '' })
+        // Stop loader & clear form
+        this.setState({ value: '', loading: false })
     }
 
     render() {
         return (
-            <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
+            <Form onSubmit={this.onSubmit} error={!!this.state.error} >
                 <Form.Field>
                     <label>Amount to Contribute</label>
                     <Input
@@ -45,14 +47,14 @@ class ContributeForm extends Component {
                         labelPosition="right"
                     />
                 </Form.Field>
-
-                <Message error header="Oops!" content={this.state.errorMessage} />
-                <Button primary loading={this.state.loading} disabled={this.state.loading}>
+                <Message error header="Oops!" content={this.state.error} />
+                <Button primary loading={this.state.loading} disabled={this.state.loading} >
                     Contribute!
                 </Button>
             </Form>
         )
     }
+
 }
 
 export default ContributeForm

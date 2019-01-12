@@ -8,6 +8,7 @@ import { Link } from '../../routes'
 
 class CampaignShow extends Component {
 
+    // Get campaign with information from address
     static async getInitialProps(props) {
         const campaign = Campaign(props.query.address)
         const summary = await campaign.methods.getSummary().call()
@@ -62,7 +63,6 @@ class CampaignShow extends Component {
                     'The balance is how much money this campaign has left to spend.'
             }
         ]
-
         return <Card.Group items={items} />
     }
 

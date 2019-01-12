@@ -11,34 +11,33 @@ class RequestNew extends Component {
         description: '',
         recipient: '',
         loading: false,
-        errorMessage: ''
+        error: ''
     }
 
     static async getInitialProps(props) {
         const { address } = props.query
-
         return { address }
     }
 
     onSubmit = async event => {
         event.preventDefault()
-
-        const campaign = Campaign(this.props.address)
-        const { description, value, recipient } = this.state
-
-        this.setState({ loading: true, errorMessage: '' })
-
+        // Start loading & clear error
+        this.setState({ loading: true, error: '' })
+        // Try creating the request on the contract
         try {
+            const campaign = Campaign(this.props.address)
             const accounts = await web3.eth.getAccounts()
+            const { description, value, recipient } = this.state
             await campaign.methods
                 .createRequest(description, web3.utils.toWei(value, 'ether'), recipient)
                 .send({ from: accounts[0] })
-
+            // Redirect to requests list
             Router.pushRoute(`/campaigns/${this.props.address}/requests`)
         } catch (err) {
-            this.setState({ errorMessage: err.message })
+            // Display error
+            this.setState({ error: err.message })
         }
-
+        // Stop loading
         this.setState({ loading: false })
     }
 
@@ -49,7 +48,7 @@ class RequestNew extends Component {
                     <a>Back</a>
                 </Link>
                 <h3>Create a Request</h3>
-                <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
+                <Form onSubmit={this.onSubmit} error={!!this.state.error}>
                     <Form.Field>
                         <label>Description</label>
                         <Input
@@ -76,10 +75,10 @@ class RequestNew extends Component {
                         />
                     </Form.Field>
 
-                    <Message error header="Oops!" content={this.state.errorMessage} />
+                    <Message error header="Oops!" content={this.state.error} />
                     <Button primary loading={this.state.loading} disabled={this.state.loading}>
                         Create!
-          </Button>
+                    </Button>
                 </Form>
             </Layout>
         )

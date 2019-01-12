@@ -12,6 +12,7 @@ class CampaignIndex extends Component {
         return { campaigns }
     }
 
+    // Render campaign list
     renderCampaigns() {
         const items = this.props.campaigns.map(address => {
             return {
@@ -28,7 +29,7 @@ class CampaignIndex extends Component {
             <Layout>
                 <div>
                     <h3>Open campaigns</h3>
-                    <Link route="/campaigns/new">
+                    <Link route="/campaigns/new" >
                         <a>
                             <Button
                                 floated="right"
@@ -40,7 +41,7 @@ class CampaignIndex extends Component {
                     </Link>
                     {this.renderCampaigns()}
                 </div>
-            </Layout >
+            </Layout>
         )
     }
 

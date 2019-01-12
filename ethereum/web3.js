@@ -1,4 +1,5 @@
-import Web3 from'web3'
+/* Get web3 instance with working provider */
+import Web3 from 'web3'
 
 let web3
 
